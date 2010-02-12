@@ -18,6 +18,8 @@ module ConstantContact
         }
       end
 
+      # FIXME: properly handle the contactlists field if exists
+
     end
 
     class << self
@@ -43,7 +45,8 @@ module ConstantContact
       # get single contact by id
       def get( id, options={} )
         data = ConstantContact.get( "/contact/#{id.to_s}", options )
-        'foo'
+        return nil if ( data.nil? or data.empty? )
+        new( data['entry'] )
       end
       
       # update a single contact record

@@ -25,6 +25,10 @@ class TestContact < Test::Unit::TestCase
 
   def test_get_contact
     contact = ConstantContact::Contact.get( 22199 )
-    assert_equal 'foo', contact
+    assert_equal 'Customer Joe', contact.name
+    assert_equal '22199', contact.uid
+    assert_equal 'joe@example.com', contact.emailaddress
+
+    # TODO: contactLists
   end
 end
