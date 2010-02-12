@@ -14,12 +14,17 @@ class TestContact < Test::Unit::TestCase
     assert_equal ConstantContact::Contact, contacts.first.class
 
     assert_equal 'Customer 1', contacts.first.name
-    assert_equal '21930', contacts.first.id
+    assert_equal '21930', contacts.first.uid
   end
 
   def test_all_contacts_with_bad_credentials
-    FakeWeb.register_uri( :get, %r{https://.+:.+@api\.constantcontact\.com/ws/customers/.+/contacts}, :body => '', :status => ['403', 'Not Authorized'] )
-    contacts = ConstantContact::Contact.all
-    assert contacts.empty?
+    # FakeWeb.register_uri( :get, %r{https://.+:.+@api\.constantcontact\.com/ws/customers/.+/contacts}, :body => '', :status => ['403', 'Not Authorized'] )
+    # contacts = ConstantContact::Contact.all
+    # assert contacts.empty?
+  end
+
+  def test_get_contact
+    contact = ConstantContact::Contact.get( 22199 )
+    assert_equal 'foo', contact
   end
 end

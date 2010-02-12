@@ -1,18 +1,23 @@
 module ConstantContact
   class Contact
 
-    attr_reader :name, :email_address, :email_type, :status, :id
+    attr_reader :uid
 
     def initialize( params={} )
       return false if params.empty?
 
-      info = params['content']['Contact']
+      @uid = params['id'].split('/').last
 
-      @id             = params['id'].split('/').last
-      @name           = info['Name']
-      @email_address  = info['EmailAddress']
-      @email_type     = info['EmailType']
-      @status         = info['Status']
+      params['content']['Contact'].each do |k,v|
+        instance_eval %{
+          @#{k.downcase} = "#{v}"
+
+          def #{k.downcase}
+            @#{k.downcase}
+          end
+        }
+      end
+
     end
 
     class << self
@@ -32,15 +37,17 @@ module ConstantContact
       end
       
       # add a new contact
-      def add
+      def add( data )
       end
       
       # get single contact by id
-      def get
+      def get( id, options={} )
+        data = ConstantContact.get( "/contact/#{id.to_s}", options )
+        'foo'
       end
       
       # update a single contact record
-      def update
+      def update( id, data )
       end
       
       # search for a contact by email address or last updated date

@@ -13,6 +13,9 @@ class Test::Unit::TestCase
   
   # setup FakeWeb 
   FakeWeb.allow_net_connect = false
-  FakeWeb.register_uri( :get, %r{https://.+:.+@api\.constantcontact\.com/ws/customers/.+/contacts}, :body => File.read( File.join( fixtures_path, 'contacts.xml' ) ) )
+  # GET /contacts
+  FakeWeb.register_uri( :get, %r{https://.+:.+@api\.constantcontact\.com/ws/customers/.+/contacts$}, :body => File.read( File.join( fixtures_path, 'get_contacts.xml' ) ) )
+  # GET /contact/:id
+  FakeWeb.register_uri( :get, %r{https://.+:.+@api\.constantcontact\.com/ws/customers/.+/contact/\d+$}, :body => File.read( File.join( fixtures_path, 'get_contact.xml' ) ) )
 
 end
