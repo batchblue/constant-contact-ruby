@@ -1,6 +1,7 @@
 = constant-contact-ruby
 
-Description goes here.
+Ruby wrapper for the Constant Contact REST API
+
 
 == Note on Patches/Pull Requests
  

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>http://api.constantcontact.com/ws/customers/joesflowers/contacts</id>
+  <title type="text">Contacts for Customer: joesflowers</title>
+  <link href="contacts" />
+  <link href="contacts" rel="self" />
+  <author>
+    <name>joesflowers</name>
+  </author>
+  <updated>2009-11-19T14:49:21.928Z</updated>
+  <link href="/ws/customers/joesflowers/contacts?next=g24umerp-fymhqg" rel="next" />
+  <link href="/ws/customers/joesflowers/contacts" rel="first" />
+  <link href="/ws/customers/joesflowers/contacts" rel="current" />
+  <entry>
+    <link href="/ws/customers/joesflowers/contacts/21930" rel="edit" />
+    <id>http://api.constantcontact.com/ws/customers/joesflowers/contacts/21930</id>
+    <title type="text">Contact: 1258642119407@example.com</title>
+    <updated>2009-11-19T14:49:23.203Z</updated>
+    <author>
+      <name>Constant Contact</name>
+    </author>
+    <content type="application/vnd.ctct+xml">
+      <Contact xmlns="http://ws.constantcontact.com/ns/1.0/" id="http://api.constantcontact.
+      com/ws/customers/joesflowers/contacts/21930">
+        <Status>Active</Status>
+        <EmailAddress>1258642119407@example.com</EmailAddress>
+        <EmailType>HTML</EmailType>
+        <Name>Customer 1</Name>
+        <OptInTime>2009-11-19T14:48:41.761Z</OptInTime>
+        <OptInSource>ACTION_BY_CONTACT</OptInSource>
+      </Contact>
+    </content>
+  </entry>
+  <entry>
+    <link href="/ws/customers/joesflowers/contacts/21929" rel="edit" />
+    <id>http://api.constantcontact.com/ws/customers/joesflowers/contacts/21929</id>
+    <title type="text">Contact: 1258641848349@example.com</title>
+    <updated>2009-11-19T14:49:23.204Z</updated>
+    <author>
+      <name>Constant Contact</name>
+    </author>
+    <content type="application/vnd.ctct+xml">
+      <Contact xmlns="http://ws.constantcontact.com/ns/1.0/" id="http://api.constantcontact.
+      com/ws/customers/joesflowers/contacts/21929">
+        <Status>Active</Status>
+        <EmailAddress>1258641848349@example.com</EmailAddress>
+        <EmailType>HTML</EmailType>
+        <Name>Customer 2</Name>
+        <OptInTime>2009-11-19T14:44:10.873Z</OptInTime>
+        <OptInSource>ACTION_BY_CONTACT</OptInSource>
+      </Contact>
+    </content>
+  </entry>
+</feed>

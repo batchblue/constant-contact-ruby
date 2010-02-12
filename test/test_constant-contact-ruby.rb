@@ -1,7 +1,8 @@
 require 'helper'
 
 class TestConstantContactRuby < Test::Unit::TestCase
-  def test_something_for_real
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+  def test_setup
+    ConstantContact.setup( 'u', 'p' )
+    assert_equal 'https://api.constantcontact.com/ws/customers/u', ConstantContact.base_uri
   end
 end
