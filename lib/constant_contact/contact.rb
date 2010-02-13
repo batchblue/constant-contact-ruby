@@ -1,5 +1,5 @@
 module ConstantContact
-  class Contact
+  class Contact < BaseResource
 
     attr_reader :uid
 
@@ -9,11 +9,12 @@ module ConstantContact
       @uid = params['id'].split('/').last
 
       params['content']['Contact'].each do |k,v|
+        underscore_key = underscore( k )
         instance_eval %{
-          @#{k.downcase} = "#{v}"
+          @#{underscore_key} = "#{v}"
 
-          def #{k.downcase}
-            @#{k.downcase}
+          def #{underscore_key}
+            @#{underscore_key}
           end
         }
       end
