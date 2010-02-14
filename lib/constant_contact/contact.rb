@@ -25,7 +25,7 @@ module ConstantContact
 
     class << self
       
-      # list all contacts
+      # Get a summary list all contacts
       def all( options={} )
         contacts = []
 
@@ -39,22 +39,22 @@ module ConstantContact
         contacts
       end
       
-      # add a new contact
+      # Add a new contact
       def add( data )
       end
       
-      # get single contact by id
+      # Get detailed record for a single contact by id
       def get( id, options={} )
         data = ConstantContact.get( "/contact/#{id.to_s}", options )
         return nil if ( data.nil? or data.empty? )
         new( data['entry'] )
       end
       
-      # update a single contact record
+      # Update a single contact record
       def update( id, data )
       end
       
-      # search for a contact by email address or last updated date
+      # Search for a contact by email address or last updated date
       def search( options={} )
       end
 
