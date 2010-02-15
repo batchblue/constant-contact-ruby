@@ -51,6 +51,10 @@ module ConstantContact
         members['feed']['entry'].collect { |entry| Contact.new( entry, true ) }
       end
 
+      def url_for( id )
+        "#{ConstantContact.base_uri}/lists/#{id}"
+      end
+
     end
 
   end

@@ -16,7 +16,11 @@ module ConstantContact
       end
 
       if lists = fields.delete( 'ContactLists' )
-        @contact_lists = lists['ContactList'].collect { |list| list['id'].split('/').last }
+        if lists['ContactList'].is_a?( Array )
+          @contact_lists = lists['ContactList'].collect { |list| list['id'].split('/').last }
+        else
+          @contact_lists << lists['ContactList']['id'].split('/').last
+        end
       end
 
       fields.each do |k,v|
@@ -51,8 +55,11 @@ module ConstantContact
       
       # Add a new contact
       #
-      # Available data fields are
-      # * EmailAddress
+      # Required data fields:
+      # * EmailAddress => String
+      # * ContactLists => Array of list IDs
+      #
+      # Options data fields:
       # * EmailType
       # * FirstName
       # * MiddleName
@@ -73,25 +80,21 @@ module ConstantContact
       # * SubPostalCode
       # * Note
       # * CustomField[1-15]
-      # * ContactLists
       # * OptInSource
       # * OptOutSource
       # 
       def add( data={}, opt_in='ACTION_BY_CUSTOMER', options={} )
-        raise "MUST IMPLEMENT CONTACT LISTS FIRST"
         xml = build_contact_xml_packet( data, opt_in )
 
         options.merge!({ :body => xml })
         data = ConstantContact.post( "/contacts", options )
 
         # check response.code
-        # if successful, data == 'updated'
-        # if failure, data == 'updated'
-
-        raise "response code: #{data.code}"
-        if data.code <= 204 # successful response
-          # get the Contact and return it
-        else # failed response
+        if data.code == 201 # Entity Created
+          return new( data['entry'] )
+        else
+          # data.code == 409 # Conflict ( probably a duplicate )
+          puts "HTTP Status Code: #{data.code}"
           return nil
         end
       end
@@ -116,23 +119,24 @@ module ConstantContact
       def build_contact_xml_packet( data={}, opt_in='ACTION_BY_CUSTOMER' )
         xml = <<EOF
 <entry xmlns="http://www.w3.org/2005/Atom">
-  <title type="text"></title>
+  <title type="text"> </title>
   <updated>#{Time.now.strftime("%Y-%m-%dT%H:%M:%S.000Z")}</updated>
   <author></author>
-  <id>NA</id>
+  <id>data:,none</id>
   <summary type="text">Contact</summary>
   <content type="application/vnd.ctct+xml">
-    <Contact xmlns="http://ws.constantcontact/ns/1.0/">
+    <Contact xmlns="http://ws.constantcontact.com/ns/1.0/">
 EOF
         
         data.each do |key, val|
           node = camelize(key.to_s)
 
           if key == :contact_lists
-            # FIXME: add in <ContactLists> entry here
-            # <ContactLists>
-            #   <ContactList id="http://api.constantcontact.com/ws/customers/geeksquad/joesflowers/lists/1" />
-            # </ContactLists>
+            xml << %Q(      <ContactLists>\n)
+            val.each do |list_id|
+              xml<< %Q(       <ContactList id="#{ContactList.url_for( list_id )}" />\n)
+            end
+            xml << %Q(      </ContactLists>\n)
           else
             xml << %Q(      <#{node}>#{val}</#{node}>\n)
           end
