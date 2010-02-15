@@ -31,4 +31,19 @@ class TestContact < Test::Unit::TestCase
 
     # TODO: contactLists
   end
+
+  def test_add_contact
+    # c = ConstantContact::Contact.add(
+    #   :email_address => 'test@example.com',
+    #   :first_name => 'First',
+    #   :last_name => 'Name',
+    #   :opt_in_source => 'ACTION_BY_CONTACT', # or ACTION_BY_CUSTOMER
+    #   :contact_lists => [1]
+    # )
+
+    # assert_equal 'test@example.com', c.email_address
+    # 
+    # contact = ConstantContact::Contact.get( c.uid )
+    # assert_equal 'test@example.com', contact.email_address
+  end
 end
