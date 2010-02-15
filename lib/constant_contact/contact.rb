@@ -1,12 +1,13 @@
 module ConstantContact
   class Contact < BaseResource
 
-    attr_reader :uid
+    attr_reader :uid, :contact_lists
 
     def initialize( params={}, from_contact_list=false )
       return false if params.empty?
-
+      
       @uid = params['id'].split('/').last
+      @contact_lists = []
 
       if from_contact_list
         fields = params['content']['ContactListMember']
@@ -14,12 +15,13 @@ module ConstantContact
         fields = params['content']['Contact']
       end
 
+      if lists = fields.delete( 'ContactLists' )
+        @contact_lists = lists['ContactList'].collect { |list| list['id'].split('/').last }
+      end
+
       fields.each do |k,v|
         underscore_key = underscore( k )
         
-        # FIXME: properly handle the contactlists field if exists
-        #         - create a ContactList entry for each one
-
         instance_eval %{
           @#{underscore_key} = "#{v}"
 
@@ -96,7 +98,7 @@ module ConstantContact
       
       # Get detailed record for a single contact by id
       def get( id, options={} )
-        data = ConstantContact.get( "/contact/#{id.to_s}", options )
+        data = ConstantContact.get( "/contacts/#{id.to_s}", options )
         return nil if ( data.nil? or data.empty? )
         new( data['entry'] )
       end
