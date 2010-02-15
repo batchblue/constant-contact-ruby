@@ -48,7 +48,7 @@ module ConstantContact
       def members( id, options={} )
         members = ConstantContact.get( "/lists/#{id.to_s}/members", options )
         return nil if ( members.nil? or members.empty? )
-        members['feed']['entry'].collect { |entry| Contact.new( entry, true ) }
+        members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
       end
 
       def url_for( id )

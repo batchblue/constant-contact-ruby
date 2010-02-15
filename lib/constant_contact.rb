@@ -10,7 +10,7 @@ module ConstantContact#:nodoc:
     class << self
       def setup( user, pass )
         basic_auth "#{API_KEY}%#{user}", pass
-        base_uri "https://api.constantcontact.com/ws/customers/#{user}"
+        base_uri "https://api.constantcontact.com/ws/customers/#{user.downcase}"
       end
     end
 
