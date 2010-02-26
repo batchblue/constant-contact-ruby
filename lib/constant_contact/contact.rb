@@ -50,12 +50,43 @@ module ConstantContact
         self.instance_variable_set("@#{key.to_s}", val)
       end
 
-      # self.send(:to_xml)
       data = ConstantContact.put( "/contacts/#{self.uid}", :body => self.send(:to_xml) )
       if data.code == 204 # success
         return true
       else
-        return data # probably should raise an error here instead
+        return false # probably should raise an error here instead
+      end
+    end
+
+    # Add user to a contact list
+    def add_to_list( list_id, options={} )
+      list_id = list_id.to_s
+      xml = update_contact_lists( *(self.contact_lists + [list_id]) )
+
+      options.merge!({ :body => xml })
+      data = ConstantContact.put( "/contacts/#{self.uid}", options )
+
+      if data.code == 204 # success
+        self.contact_lists << list_id unless self.contact_lists.include?( list_id )
+        return true
+      else
+        return false # probably should raise an error here instead
+      end
+    end
+
+    # Remove user from a contact list
+    def remove_from_list( list_id, options={} )
+      list_id = list_id.to_s
+      xml = update_contact_lists( *(self.contact_lists - [list_id]) )
+
+      options.merge!({ :body => xml })
+      data = ConstantContact.put( "/contacts/#{self.uid}", options )
+      
+      if data.code == 204 # success
+        self.contact_lists.delete( list_id )
+        return true
+      else
+        return false # probably should raise an error here instead
       end
     end
 
@@ -136,14 +167,28 @@ module ConstantContact
     def self.search( options={} )
     end
 
+    def self.url_for( id )
+      "#{ConstantContact.base_uri}/contacts/#{id}"
+    end
+
     private
+
+    def update_contact_lists( *lists )
+      str = %Q(<ContactLists>\n)
+      lists.each do |list|
+        str << %Q(        <ContactList id="#{ContactList.url_for( list )}" />\n)
+      end
+      str << %Q(      </ContactLists>)
+
+      self.original_xml.gsub(/<ContactLists>.*<\/ContactLists>/m, str)
+    end
 
     def self.build_contact_xml_packet( data={}, opt_in='ACTION_BY_CUSTOMER' )
       xml = <<EOF
 <entry xmlns="http://www.w3.org/2005/Atom">
   <title type="text"> </title>
   <updated>#{Time.now.strftime("%Y-%m-%dT%H:%M:%S.000Z")}</updated>
-  <author></author>
+  <author> </author>
   <id>data:,none</id>
   <summary type="text">Contact</summary>
   <content type="application/vnd.ctct+xml">
@@ -170,7 +215,6 @@ EOF
   </content>
 </entry>
 EOF
-
       xml
     end # def build_contact_xml_packet
 
