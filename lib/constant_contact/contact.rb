@@ -124,7 +124,7 @@ module ConstantContact
     end
 
     # Opt-in a user who has previously opted out
-    #
+    #--
     # FIXME: this isn't currently working.  Currently I keep getting a 403-Forbidden response
     #        should this really even be in the API wrapper at all?
     def opt_in!( *lists )
