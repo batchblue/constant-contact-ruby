@@ -1,5 +1,5 @@
 module ConstantContact
-  class BaseResource
+  class BaseResource #:nodoc:
     
     private 
 

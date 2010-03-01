@@ -1,9 +1,9 @@
-module ConstantContact
+module ConstantContact 
   class ContactList < BaseResource
 
     attr_reader :uid, :original_xml
 
-    def initialize( params={}, orig_xml='' )
+    def initialize( params={}, orig_xml='' ) #:nodoc:
       return false if params.empty?
 
       @uid = params['id'].split('/').last
@@ -22,6 +22,7 @@ module ConstantContact
       end
     end
 
+    # Update a contacts attributes
     def update_attributes!( params={} )
       return false unless full_record?
 
@@ -89,6 +90,7 @@ module ConstantContact
       members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
     end
 
+    # Returns the objects API URI
     def self.url_for( id )
       "#{ConstantContact.base_uri}/lists/#{id}"
     end
@@ -114,10 +116,12 @@ EOF
       xml
     end
 
+    # Is this a full record or a summary record?
     def full_record?
       !self.members.emtpy?
     end
 
+    # Convert the object into the needed API XML format
     def to_xml
       return nil unless full_record?
 

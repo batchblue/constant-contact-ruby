@@ -3,7 +3,7 @@ module ConstantContact
 
     attr_reader :uid, :contact_lists, :original_xml
 
-    def initialize( params={}, orig_xml='', from_contact_list=false )
+    def initialize( params={}, orig_xml='', from_contact_list=false ) #:nodoc:
       return false if params.empty?
       
       @uid = params['id'].split('/').last
@@ -220,6 +220,7 @@ module ConstantContact
     def self.search( options={} )
     end
 
+    # Returns the objects API URI
     def self.url_for( id )
       "#{ConstantContact.base_uri}/contacts/#{id}"
     end
