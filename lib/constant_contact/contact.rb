@@ -59,7 +59,7 @@ module ConstantContact
     end
 
     # Add user to a contact list
-    def add_to_list( list_id, options={} )
+    def add_to_list!( list_id, options={} )
       list_id = list_id.to_s
       xml = update_contact_lists( *(self.contact_lists + [list_id]) )
 
@@ -75,7 +75,7 @@ module ConstantContact
     end
 
     # Remove user from a contact list
-    def remove_from_list( list_id, options={} )
+    def remove_from_list!( list_id, options={} )
       list_id = list_id.to_s
       xml = update_contact_lists( *(self.contact_lists - [list_id]) )
 
@@ -89,6 +89,42 @@ module ConstantContact
         return false # probably should raise an error here instead
       end
     end
+
+    # Set a users contact lists
+    def replace_contact_lists!( *lists )
+      xml = update_contact_lists( *lists )
+
+      # FIXME: clean up the following code - it appears in 3 methods in this class!
+      options = { :body => xml }
+      data = ConstantContact.put( "/contacts/#{self.uid}", options )
+      
+      if data.code == 204 # success
+        @contact_lists = lists.map { |l| l.to_s }
+        return true
+      else
+        return false # probably should raise an error here instead
+      end
+    end
+
+    # Opt-out from all contact lists
+    #
+    # Contact will be removed from all lists and become a member of the 
+    # Do-Not_Mail special list
+    def opt_out!( options={} )
+      data = ConstantContact.delete( "/contacts/#{self.uid}", options )
+
+      if data.code == 204
+        @contact_lists = []
+        return true
+      else
+        return false
+      end
+    end
+
+    # Opt-in a user who has previously opted out
+    # def opt_in( *lists )
+    #
+    # end
 
     # Get a summary list all contacts
     def self.all( options={} )
@@ -180,7 +216,12 @@ module ConstantContact
       end
       str << %Q(      </ContactLists>)
 
-      self.original_xml.gsub(/<ContactLists>.*<\/ContactLists>/m, str)
+      # self.original_xml.gsub(/<ContactLists>.*<\/ContactLists>/m, str)
+      if self.original_xml =~ /<ContactLists>.*<\/ContactLists>/m
+        self.original_xml.gsub( /#{$&}/, str)
+      else
+        self.original_xml.gsub( /<\/Contact>/m, "#{str}\n</Contact>" )
+      end
     end
 
     def self.build_contact_xml_packet( data={}, opt_in='ACTION_BY_CUSTOMER' )
