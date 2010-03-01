@@ -63,6 +63,7 @@ module ConstantContact
       list_id = list_id.to_s
       xml = update_contact_lists( *(self.contact_lists + [list_id]) )
 
+      # FIXME: clean up the following code - it appears in 3 methods in this class!
       options.merge!({ :body => xml })
       data = ConstantContact.put( "/contacts/#{self.uid}", options )
 
@@ -79,6 +80,7 @@ module ConstantContact
       list_id = list_id.to_s
       xml = update_contact_lists( *(self.contact_lists - [list_id]) )
 
+      # FIXME: clean up the following code - it appears in 3 methods in this class!
       options.merge!({ :body => xml })
       data = ConstantContact.put( "/contacts/#{self.uid}", options )
       
@@ -122,9 +124,24 @@ module ConstantContact
     end
 
     # Opt-in a user who has previously opted out
-    # def opt_in( *lists )
     #
-    # end
+    # FIXME: this isn't currently working.  Currently I keep getting a 403-Forbidden response
+    #        should this really even be in the API wrapper at all?
+    def opt_in!( *lists )
+      # # NOTE: same as replace_contact_lists but must set to ACTION_BY_CONTACT
+      # xml = update_contact_lists( *lists ).gsub( /<\/ContactLists>/, %Q(<OptInSource>ACTION_BY_CONTACT</OptInSource>\n\t</ContactLists>) )
+
+      # # FIXME: clean up the following code - it appears in 3 methods in this class!
+      # options = { :body => xml }
+      # data = ConstantContact.put( "/contacts/#{self.uid}", options )
+      # 
+      # if data.code == 204 # success
+      #   @contact_lists = lists.map { |l| l.to_s }
+      #   return true
+      # else
+      #   return false # probably should raise an error here instead
+      # end
+    end
 
     # Get a summary list all contacts
     def self.all( options={} )
