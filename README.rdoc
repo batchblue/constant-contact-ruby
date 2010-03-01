@@ -13,6 +13,10 @@ Ruby wrapper for the Constant Contact REST API
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+== Authors
+
+Craig P Jolicoeur - http://craigjolicoeur.com
+
 == Copyright
 
-Copyright (c) 2010 Craig P Jolicoeur. See LICENSE for details.
+Copyright (c) 2010 BatchBlue Software, LLC. See LICENSE for details.
