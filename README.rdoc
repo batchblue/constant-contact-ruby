@@ -2,6 +2,9 @@
 
 Ruby wrapper for the Constant Contact REST API
 
+== Usage ==
+
+...to be completed...
 
 == Note on Patches/Pull Requests
  
