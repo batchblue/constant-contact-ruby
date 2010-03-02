@@ -10,9 +10,13 @@ module ConstantContact
     def camelize( string )
       BaseResource.camelize( string )
     end
+
+    def self.underscore( string )
+      string.to_s.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
+    end
     
     def underscore( string )
-      string.to_s.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
+      BaseResource.underscore( string )
     end
     
   end

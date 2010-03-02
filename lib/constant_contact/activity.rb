@@ -1,6 +1,11 @@
 module ConstantContact 
   class Activity < BaseResource
 
+    ADD_CONTACTS        = 'ADD_CONTACTS'.freeze
+    REMOVE_CONTACTS     = 'REMOVE_CONTACTS_FROM_LISTS'.freeze
+    CLEAR_CONTACTS      = 'CLEAR_CONTACTS_FROM_LISTS'.freeze
+    EXPORT_CONTACTS     = 'EXPORT_CONTACTS'.freeze
+
     attr_reader :uid, :original_xml
 
     def initialize( params={}, orig_xml='' ) #:nodoc:
@@ -52,22 +57,82 @@ module ConstantContact
 
     # Add multiple users to one or more contact lists
     def self.add_users_to_lists( users=[], *lists )
+      data_param = build_data_param( users )
+      list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
 
+      data = ConstantContact.post( '/activities', :query => { :activity => ADD_CONTACTS, :data => data_param, :lists => list_param } )
+
+      if data.code == 201
+        new( data['feed']['entry'] )
+      else
+        puts "HTTP Status Code: #{data.code}, message: #{data.message}"
+        return false
+      end
     end
 
     # Remove multiple users from a contact list
-    def self.remove_users_from_list( users=[], list_id=nil )
-      return if list_id.nil?
+    def self.remove_users_from_lists( users=[], *lists )
+      data_param = build_data_param( users )
+      list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
+
+      data = ConstantContact.post( '/activities', :query => { :activity => REMOVE_CONTACTS, :data => data_param, :lists => list_param } )
+
+      if data.code == 201
+        new( data['feed']['entry'] )
+      else
+        puts "HTTP Status Code: #{data.code}, message: #{data.message}"
+        return false
+      end
     end
 
     # Remove all users from a specific contact list
-    def self.remove_all_users_from_list( list_id )
+    def self.remove_all_users_from_lists( *lists )
+      list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
+      data = ConstantContact.post( '/activities', :query => { :activity => CLEAR_CONTACTS, :lists => list_param } )
 
+      if data.code == 201
+        new( data['feed']['entry'] )
+      else
+        puts "HTTP Status Code: #{data.code}, message: #{data.message}"
+        return false
+      end
     end
 
     # Export subscribers list to a file
     def self.export( list_id )
 
+    end
+
+    private
+
+    # Build the data= query param for a POST request
+    #
+    # @params - users => Array of user hash objects
+    #
+    def self.build_data_param( users )
+      return '' if users.empty? 
+      data_start, data_end = '', ''
+      keys, fields = [], []
+
+      # get a list of all the key fields and then create values
+      users.each do |u| 
+        u.each_key do |k| 
+          readable_key = underscore(k).split('_').map{|x| x.capitalize}.join(' ')
+          packet = { :original => k, :readable => readable_key }
+          keys << packet unless keys.include?( packet )
+        end 
+      end
+      data_start = keys.map { |k| k[:readable] }.join(',') + "\n"
+
+      # now build the data fields
+      users.each do |u|
+        tmp = ''
+        keys.each { |k| tmp << "#{u[k[:original]]}," }
+        fields << tmp.chomp(',') + "\n"
+      end
+      data_end = fields.join
+
+      return data_start + data_end
     end
 
   end # class Activity
