@@ -52,15 +52,17 @@ module ConstantContact
     def self.get( id, options={} )
       activity = ConstantContact.get( "/activities/#{id.to_s}", options )
       return nil if ( activity.nil? or activity.empty? )
-      new( activity['entry'], data.body )
+      new( activity['entry'], activity.body )
     end
 
     # Add multiple users to one or more contact lists
-    def self.add_users_to_lists( users=[], *lists )
+    def self.add_contacts_to_lists( users=[], *lists )
       data_param = build_data_param( users )
       list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
 
-      data = ConstantContact.post( '/activities', :query => { :activity => ADD_CONTACTS, :data => data_param, :lists => list_param } )
+      data = ConstantContact.post( '/activities', 
+                                  :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, 
+                                  :body => { :activity => ADD_CONTACTS, :data => data_param, :lists => list_param } )
 
       if data.code == 201
         new( data['feed']['entry'] )
@@ -71,11 +73,13 @@ module ConstantContact
     end
 
     # Remove multiple users from a contact list
-    def self.remove_users_from_lists( users=[], *lists )
+    def self.remove_contacts_from_lists( users=[], *lists )
       data_param = build_data_param( users )
       list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
 
-      data = ConstantContact.post( '/activities', :query => { :activity => REMOVE_CONTACTS, :data => data_param, :lists => list_param } )
+      data = ConstantContact.post( '/activities', 
+                                  :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, 
+                                  :body => { :activity => REMOVE_CONTACTS, :data => data_param, :lists => list_param } )
 
       if data.code == 201
         new( data['feed']['entry'] )
@@ -86,9 +90,20 @@ module ConstantContact
     end
 
     # Remove all users from a specific contact list
-    def self.remove_all_users_from_lists( *lists )
-      list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
-      data = ConstantContact.post( '/activities', :query => { :activity => CLEAR_CONTACTS, :lists => list_param } )
+    def self.remove_all_contacts_from_lists( *lists )
+      # list_param = lists.map { |list| ContactList.url_for( list.to_s ) }
+      
+      # FIXME: this is hack because passing in an array of lists wasnt working because of Hash.to_params
+      #         Hash#to_params returns lists[]=foo&lists[]=bar instead of lists=foo&lists=bar
+      #         I can't even find where Hash#to_params is defined!!!
+      list_param = ''
+      lists.each do |list|
+        list_param << "#{ContactList.url_for( list.to_s )}&lists="
+      end
+
+      data = ConstantContact.post( '/activities', 
+                                  :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, 
+                                  :body => { 'activityType' => CLEAR_CONTACTS, :lists => list_param.chomp('&lists=') } )
 
       if data.code == 201
         new( data['feed']['entry'] )
@@ -107,7 +122,7 @@ module ConstantContact
 
     # Build the data= query param for a POST request
     #
-    # @params - users => Array of user hash objects
+    # @param [Array] Users - an array of user hash objects
     #
     def self.build_data_param( users )
       return '' if users.empty? 

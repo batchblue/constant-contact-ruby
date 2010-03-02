@@ -39,6 +39,11 @@ module ConstantContact
       end
     end
 
+    # Remove all contacts from the contact list
+    def clear_contacts!
+      Activity.remove_all_contacts_from_lists( self.uid )
+    end
+
     # Get all contact lists
     def self.all( options={} )
       lists = []
@@ -80,7 +85,7 @@ module ConstantContact
     def self.get( id, options={} )
       list = ConstantContact.get( "/lists/#{id.to_s}", options )
       return nil if ( list.nil? or list.empty? )
-      new( list['entry'], data.body )
+      new( list['entry'], list.body )
     end
 
     # Get a lists members
