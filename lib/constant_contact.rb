@@ -1,3 +1,12 @@
+require 'rubygems'
+require 'httparty'
+
+require 'constant_contact'
+require 'constant_contact/base_resource'
+require 'constant_contact/contact'
+require 'constant_contact/contact_list'
+require 'constant_contact/activity'
+
 module ConstantContact
 
     include HTTParty

@@ -8,8 +8,11 @@ HTTParty gem - http://rubygems.org/gems/httparty
 
 == Usage
 
-  require 'constant-contact-ruby'
+  require 'constant_contact'
   include ConstantContact
+  
+  ### Setup Credentials ###
+  ConstantContact.setup( 'my_username', 'my_password' )
 
   ### Contacts ###
 
