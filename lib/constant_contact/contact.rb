@@ -5,7 +5,7 @@ module ConstantContact
 
     def initialize( params={}, orig_xml='', from_contact_list=false ) #:nodoc:
       return false if params.empty?
-      
+
       @uid = params['id'].split('/').last
       @original_xml = orig_xml
       @contact_lists = []
@@ -210,14 +210,29 @@ module ConstantContact
       new( data['entry'], data.body )
     end
     
-    # Search for a contact by email address or last updated date
+    # Search for a contact by last updated date
     # 
     # Valid options:
-    # * :email => "Query String"
     # * :updated_since => Time object
     # * :list_type => One of 'active'|'removed'|'do-not-mail'
     #
-    def self.search( options={} )
+    # def self.search_by_date( options={} )
+    # end
+
+    # Search for a contact by email address
+    # 
+    # @param [String] email => "user@example.com"
+    #
+    def self.search_by_email( email )
+      data = ConstantContact.get( '/contacts', :query => { :email => email.downcase } )
+      return [] if ( data.nil? )
+      
+      if data.code == 500
+        puts "HTTP Status Code: #{data.code}, message: #{data.message}"
+        return false
+      else
+        new( data['feed']['entry'] )
+      end
     end
 
     # Returns the objects API URI
