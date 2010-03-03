@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{constant-contact-ruby}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Craig P Jolicoeur"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "TODO",
      "VERSION.yml",
+     "constant-contact-ruby.gemspec",
      "constant-contact-ruby.rb",
      "lib/constant_contact.rb",
      "lib/constant_contact/activity.rb",
