@@ -98,7 +98,7 @@ module ConstantContact
                                   :body => { 'activityType' => CLEAR_CONTACTS, :lists => list_param } )
 
       if data.code == 201
-        new( data['feed']['entry'] )
+        new( data['entry'] )
       else
         puts "HTTP Status Code: #{data.code}, message: #{data.message}"
         return false
@@ -106,8 +106,32 @@ module ConstantContact
     end
 
     # Export subscribers list to a file
-    def self.export( list_id )
+    #
+    # @param [Integer/String] list_id is the uid of the list to export
+    # @param [Array] fields is an array of fields to export for list contacts
+    #
+    def self.export( list_id, *fields )
+      export_columns = build_export_columns( *fields )
 
+      data = ConstantContact.post( '/activities',
+                                  :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' },
+                                  :body => { 
+                                    'activityType' => EXPORT_CONTACTS,
+                                    'fileType' => 'CSV',
+                                    'exportOptDate' => true,
+                                    'exportOptSource' => true,
+                                    'exportListName' => true,
+                                    'sortBy' => 'EMAIL_ADDRESS',
+                                    'listId' => ContactList.url_for( list_id ),
+                                    :columns => export_columns
+                                  } )
+
+      if data.code == 201
+        new( data['entry'] )
+      else
+        puts "HTTP Status Code: #{data.code}, message: #{data.message}"
+        return false
+      end
     end
 
     private
@@ -157,6 +181,15 @@ module ConstantContact
         list_param << "#{ContactList.url_for( list.to_s )}&lists="
       end
       list_param.chomp('&lists=')
+    end
+
+    def self.build_export_columns( *fields )
+      columns_param = ''
+      fields.each do |field|
+        readable_col = underscore( field ).split('_').map{ |x| x.upcase }.join(' ')
+        columns_param << "#{readable_col}&columns="
+      end
+      columns_param.chomp('&columns=')
     end
 
   end # class Activity
