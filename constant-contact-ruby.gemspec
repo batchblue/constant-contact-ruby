@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
      "TODO",
      "VERSION.yml",
      "constant-contact-ruby.gemspec",
-     "constant-contact-ruby.rb",
      "lib/constant_contact.rb",
      "lib/constant_contact/activity.rb",
      "lib/constant_contact/base_resource.rb",
