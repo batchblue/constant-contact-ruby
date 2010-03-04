@@ -96,7 +96,7 @@ module ConstantContact
       if( members['feed']['entry'].is_a?(Array) )
         members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
       else
-        Contact.new( members['feed']['entry'], '', true )
+        [Contact.new( members['feed']['entry'], '', true )]
       end
     end
 
