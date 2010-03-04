@@ -1,3 +1,7 @@
+== 0.2.4 == 2010/03/04
+
+* always return an array of Contact objects from ContactList.members method
+
 == 0.2.3 == 2010/03/04
 
 * bugfix for when activities return single or multiple records
