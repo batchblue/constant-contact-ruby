@@ -1,0 +1,3 @@
+== 0.2.3 == 2010/03/04
+
+* bugfix for when activities return single or multiple records
