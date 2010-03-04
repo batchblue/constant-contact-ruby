@@ -41,8 +41,10 @@ module ConstantContact
       data = ConstantContact.get( '/activities', options )
       return activities if ( data.nil? or data.empty? or data['feed']['entry'].nil? )
 
-      data['feed']['entry'].each do |entry|
-        activities << new( entry )
+      if( data['feed']['entry'].is_a?(Array) )
+        data['feed']['entry'].each { |entry| activities << new( entry ) }
+      else
+        activities << new( data['feed']['entry'] )
       end
 
       activities

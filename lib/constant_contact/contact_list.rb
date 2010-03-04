@@ -92,7 +92,12 @@ module ConstantContact
     def self.members( id, options={} )
       members = ConstantContact.get( "/lists/#{id.to_s}/members", options )
       return nil if ( members.nil? or members.empty? )
-      members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
+      
+      if( members['feed']['entry'].is_a?(Array) )
+        members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
+      else
+        Contact.new( members['feed']['entry'], '', true )
+      end
     end
 
     # Returns the objects API URI
