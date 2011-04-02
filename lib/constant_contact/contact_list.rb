@@ -90,14 +90,7 @@ module ConstantContact
 
     # Get a lists members
     def self.members( id, options={} )
-      members = ConstantContact.get( "/lists/#{id.to_s}/members", options )
-      return nil if ( members.nil? or members.empty? )
-      
-      if( members['feed']['entry'].is_a?(Array) )
-        members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
-      else
-        [Contact.new( members['feed']['entry'], '', true )]
-      end
+      fetch_members(id, options)
     end
 
     # Returns the objects API URI
@@ -124,6 +117,39 @@ module ConstantContact
 </entry>
 EOF
       xml
+    end
+    
+    def self.fetch_members( id, options={} )
+      contacts = []
+      link     = "/lists/#{id.to_s}/members"
+      if options['next_link']
+        full_link = options.delete('next_link')
+        link += "?#{full_link.split('?').last}"
+      end
+      
+      members = ConstantContact.get( link, options )
+      return nil if ( members.nil? or members.empty? )
+      
+      if( members['feed']['entry'].is_a?(Array) )
+        contacts = members['feed']['entry'].collect { |entry| Contact.new( entry, '', true ) }
+      else
+        contacts = [Contact.new( members['feed']['entry'], '', true )]
+      end
+      
+      if feed_has_next_link?(members['feed'])
+        next_link = find_next_link members['feed']
+        contacts += fetch_members(id, options.merge!('next_link' => next_link))
+      end
+      
+      contacts
+    end
+
+    def self.feed_has_next_link?(feed)
+      !find_next_link(feed).nil?
+    end
+
+    def self.find_next_link(feed)
+      feed['link'].collect { |link| link['href'] if link["rel"] && link["rel"] == 'next' }.compact.first
     end
 
     # Is this a full record or a summary record?
